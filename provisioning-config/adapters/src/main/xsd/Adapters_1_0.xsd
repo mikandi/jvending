@@ -1,0 +1,206 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
+     targetNamespace="http://java.sun.com/xml/ns/j2ee-cp"
+     xmlns:j2ee-cp="http://java.sun.com/xml/ns/j2ee-cp"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     elementFormDefault="qualified"
+     attributeFormDefault="unqualified"
+     version="1.0">
+
+	<xsd:annotation>
+    		<xsd:documentation>
+
+    			Copyright 2003 Sun Microsystems, Inc. All rights reserved.
+ 			SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+			
+			This is the XML schema for the J2EE Client Provisioning 1.0
+			adapters configuration file.
+		
+			All adapter configuration files must indicate this XML
+			schema by using the reserved namespace
+		
+				http://java.sun.com/xml/ns/j2ee-cp
+
+			as shown below:
+
+			<adapters xmlns="http://java.sun.com/xml/ns/j2ee-cp"
+ 				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ 				xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee-cp Adapters_1_0.xsd">
+			 ...
+			</adapters>
+
+    		</xsd:documentation>
+	</xsd:annotation>
+
+	
+	<xsd:element name = "adapters" type="j2ee-cp:adaptersType">
+		<xsd:annotation>
+			<xsd:documentation>
+   				The adapters element contains the configuration information
+				for all the adapters in the provisioning server. This element 
+				is the root element for the adapters configuration file.
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:unique name="adapter-name-uniqueness">
+    			<xsd:annotation>
+    				<xsd:documentation>
+					Adapters are unique by name.
+    				</xsd:documentation>
+    			</xsd:annotation>
+    			<xsd:selector xpath="j2ee-cp:adapter"/>
+    			<xsd:field    xpath="j2ee-cp:adapter-name"/>
+		</xsd:unique>
+		<xsd:unique name="base-uri-uniqueness">
+    			<xsd:annotation>
+    				<xsd:documentation>
+					Adapters have unique base-uri.
+    				</xsd:documentation>
+    			</xsd:annotation>
+    			<xsd:selector xpath="j2ee-cp:adapter"/>
+    			<xsd:field    xpath="j2ee-cp:base-uri"/>
+		</xsd:unique>
+	</xsd:element>
+
+	<xsd:complexType name="adaptersType">
+		<xsd:sequence>
+			<xsd:element ref = "j2ee-cp:adapter" maxOccurs = "unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name = "adapter" type="j2ee-cp:adapterType">
+		<xsd:annotation>
+			<xsd:documentation>
+
+    				The adapter element contains the configuration information
+				for a single adapter in the provisioning server.
+				Presence of the descriptor-file element indicates
+				this adapter uses a descriptor file of the mime-type
+				and file extension specified within. Absence of the
+				descriptor-file element indicates this adapter
+				is a generic content download adapter, i.e. does
+				not use a descriptor file to configure delivery.
+
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:unique name="init-param-name-uniqueness">
+    			<xsd:annotation>
+    				<xsd:documentation>
+					Initialization parameters are unique by name.
+    				</xsd:documentation>
+    			</xsd:annotation>
+    			<xsd:selector xpath="j2ee-cp:init-param"/>
+    			<xsd:field    xpath="j2ee-cp:param-name"/>
+		</xsd:unique>
+	</xsd:element>
+
+	<xsd:complexType name="adapterType">
+		<xsd:sequence>
+			<xsd:element ref = "j2ee-cp:adapter-name"/>
+			<xsd:element ref = "j2ee-cp:adapter-class"/>
+			<xsd:element ref = "j2ee-cp:base-uri"/>
+			<xsd:element ref = "j2ee-cp:descriptor-file" minOccurs = "0"/>
+			<xsd:element ref = "j2ee-cp:fulfillment-duration"/>
+			<xsd:element ref = "j2ee-cp:init-param" minOccurs = "0" maxOccurs = "unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name = "adapter-name" type = "xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+    				The name of this adapter. This name is unique amongst
+				the other adapter names in the adapter configuration file.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "adapter-class" type = "xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+    				The fully qualified Java classname for this adapter.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "base-uri" type = "xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+
+    				The URL, relative to the root of the URI namespace
+				of the provisioning server of this adapter. The URI
+				must begin with a leading '/'. The base URI is unique
+				amongst the base URI for other adapters.
+
+				for example: The OTA adapter may have base URL 
+				'/midp'
+   			 </xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "descriptor-file">
+		<xsd:annotation>
+			<xsd:documentation>
+    				The configuration information about the
+				descriptor file supported by this adapter.
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:extension"/>
+				<xsd:element ref = "j2ee-cp:mime-type"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "extension" type = "xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+    				The file extension for the descriptor file.
+				e.g. 'jad'.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "mime-type" type = "xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+  				The mime-type for the descriptor file.
+   			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "fulfillment-duration" type = "xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+    				The fulfillment interval is a positive integer indicating
+				the default number of milliseconds after the initial creation of
+				a fulfillment ID that the fulfillment tasks for this
+				adapter will expire.
+				A value of 0 indicates there is no expiry time.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "init-param">
+		<xsd:annotation>
+			<xsd:documentation>
+    				This element is used to contain
+				a single initialization parameter.
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:param-name"/>
+				<xsd:element ref = "j2ee-cp:param-value"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "param-name" type = "xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+				The name of this initialization parameter. The name
+				of this initialation parameter must be unique
+				within the adapter.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "param-value" type = "xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+    				The value of this initialization parameter. 
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+</xsd:schema>

@@ -1,0 +1,296 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+ 	<meta attribute="extends">org.jvending.provisioning.model.BaseModel</meta>
+ 	
+	<!-- Catalog -->
+	<class name="org.jvending.provisioning.model.clientbundle.ClientBundle"
+		table="client_bundle" catalog="devcatalog">
+		<cache usage="nonstrict-read-write"/>
+		<id name="primaryId" column="pid" type="integer">
+			<generator class="native" />
+		</id>
+		<version name = "eventId" column="version_timestamp" type="timestamp"/>
+		<property name="bundleId" column="bundle_id" type="string"
+			not-null="true" />
+		<property name="parId" column="par_id" type="long" not-null="true" />
+		<property name="bundleType" column="bundle_type" type="string"
+			not-null="true" />
+		<property name="contentId" column="contentid" type="string"
+			not-null="true" />
+		<property name="version" column="version" type="string" />
+		<property name="uploadTime" column="upload_time" type="timestamp" />
+		<property name="lastUpdatedTime" column="last_update_time"
+			type="timestamp" />
+
+		<component name="toolDescription"
+			class="org.jvending.provisioning.model.clientbundle.ToolDescription">
+			<list name="descriptions" table="tool_bundle_description"
+				catalog="devcatalog">
+				<key column="fk_client_bundle_pid" />
+				<index column="id" type="integer" />
+				<composite-element
+					class="org.jvending.provisioning.model.clientbundle.Description">
+					<property name="description" column="bundle_description"
+						type="string" />
+					<property name="locale" column="bundle_locale" type="string" />
+				</composite-element>
+			</list>
+
+			<list name="displayNames" table="tool_bundle_display_name"
+				catalog="devcatalog">
+				<key column="fk_client_bundle_pid" />
+				<index column="id" type="integer" />
+				<composite-element
+					class="org.jvending.provisioning.model.clientbundle.DisplayName">
+					<property name="displayName" column="bundle_display_name"
+						type="string" />
+					<property name="locale" column="description_locale" type="string" />
+				</composite-element>
+			</list>
+
+			<list name="icons" table="tool_bundle_icon" catalog="devcatalog">
+				<key column="fk_client_bundle_pid" />
+				<index column="id" type="integer" />
+				<composite-element
+					class="org.jvending.provisioning.model.clientbundle.Icon">
+					<property name="fileUri" column="icon_file_uri" type="string" />
+					<property name="mimeType" column="mime_type" type="string" />
+					<property name="locale" column="locale" type="string" />
+				</composite-element>
+			</list>
+		</component>
+
+		<component name="userDescription"
+			class="org.jvending.provisioning.model.clientbundle.UserDescription">
+			<list name="descriptions" table="user_bundle_description"
+				catalog="devcatalog">
+				<key column="fk_client_bundle_pid" />
+				<index column="id" type="integer" />
+				<composite-element
+					class="org.jvending.provisioning.model.clientbundle.Description">
+					<property name="description" column="description_name"
+						type="string" />
+					<property name="locale" column="description_locale" type="string" />
+				</composite-element>
+			</list>
+
+			<list name="displayNames" table="user_bundle_display_name">
+				<key column="fk_client_bundle_pid" />
+				<index column="id" type="integer" />
+				<composite-element
+					class="org.jvending.provisioning.model.clientbundle.DisplayName">
+					<property name="displayName" column="display_name" type="string" />
+					<property name="locale" column="display_locale" type="string" />
+				</composite-element>
+			</list>
+
+			<list name="icons" table="user_bundle_icon">
+				<key column="fk_client_bundle_pid" />
+				<index column="id" type="integer" />
+				<composite-element
+					class="org.jvending.provisioning.model.clientbundle.Icon">
+					<property name="fileUri" column="icon_file_uri" type="string" />
+					<property name="mimeType" column="mime_type" type="string" />
+					<property name="locale" column="locale" type="string" />
+				</composite-element>
+			</list>
+		</component>
+
+		<component name="vendorInfo"
+			class="org.jvending.provisioning.model.clientbundle.VendorInfo">
+			<property name="vendorName" column="vendor_name" type="string" />
+			<property name="vendorNameLocale" column="vendor_name_locale"
+				type="string" />
+			<property name="vendorUrl" column="vendor_url" type="string" />
+			<property name="vendorUrlLocale" column="vendor_url_locale"
+				type="string" />
+			<property name="vendorDescription" column="vendor_description"
+				type="string" />
+			<property name="vendorDescriptionLocale" column="vendor_description_locale"
+				type="string" />
+		</component>
+
+		<component name="publishedStatus"
+			class="org.jvending.provisioning.model.clientbundle.PublishedStatus">
+			<property name="status" column="published_status" type="string" />
+			<property name="shared" column="shared_status" type="string" />
+		</component>
+
+		<list name="previews" table="preview">
+			<key column="fk_client_bundle_pid" />
+			<index column="id" type="integer" />
+			<composite-element
+				class="org.jvending.provisioning.model.clientbundle.Preview">
+				<property name="fileUri" column="preview_file_uri" type="string" />
+				<property name="mimeType" column="preview_mimetype" type="string" />
+				<property name="locale" column="preview_locale" type="string" />
+			</composite-element>
+		</list>
+
+		<list name="catalogProperties" table="catalog_property">
+			<key column="fk_client_bundle_pid" />
+			<index column="id" type="integer" />
+			<composite-element
+				class="org.jvending.provisioning.model.clientbundle.CatalogProperty">
+				<property name="name" column="catalog_property_name" type="string" />
+				<property name="value" column="catalog_property_value"
+					type="text" />
+			</composite-element>
+		</list>
+
+		<list name="copyrights" table="copyright">
+			<key column="fk_client_bundle_pid" />
+			<index column="id" type="integer" />
+			<composite-element
+				class="org.jvending.provisioning.model.clientbundle.Copyright">
+				<property name="copyright" column="copyright" type="string" />
+				<property name="uri" column="copyright_uri" type="string" />
+				<property name="locale" column="copyright_locale" type="string" />
+			</composite-element>
+		</list>
+
+		<list name="deviceRequirements" table="device_requirement">
+			<key column="fk_client_bundle_pid" />
+			<index column="id" type="integer" />
+			<composite-element
+				class="org.jvending.provisioning.model.clientbundle.DeviceRequirement">
+				<property name="name" column="device_requirement_name"
+					type="string" />
+				<property name="value" column="device_requirement_value"
+					type="string" />
+			</composite-element>
+		</list>
+
+		<list name="contentFilesFromDescriptor" table="content_file">
+			<key column="fk_client_bundle_pid" />
+			<index column="id" type="integer" />
+			<composite-element
+				class="org.jvending.provisioning.model.clientbundle.ContentFile">
+				<property name="mimeType" column="content_mimetype" type="string" />
+				<property name="fileUri" column="content_file_uri" type="string" />
+			</composite-element>
+		</list>
+
+		<component name="descriptorFile"
+			class="org.jvending.provisioning.model.clientbundle.DescriptorFile">
+			<property name="mimeType" column="descriptor_mimetype" type="string" />
+			<property name="fileUri" column="descriptor_file_uri" type="string" />
+		</component>
+
+
+		<component name="contentFile"
+			class="org.jvending.provisioning.model.clientbundle.ContentFile">
+			<property name="mimeType" column="content_mimetype" type="string" />
+			<property name="fileUri" column="content_file_uri" type="string" />
+		</component>
+	</class>
+	
+	<class
+		name="org.jvending.provisioning.model.mobileclient.Client"
+		table="mobile_client" catalog="devcatalog">
+		<id name="primaryId" column="pid" type="integer">
+			<generator class="native" />
+		</id>
+		<version name = "version" column="version_timestamp" type="timestamp"/>
+		<property name="uri" column="uri" type="string"
+			not-null="true" />
+		<property name="appVersion" column="app_version" type="string" not-null="true"/>
+		<property name="language" column="language" type="string"/>
+		<property name="device" column="device" type="string"/>
+		<property name="region" column="region" type="string"/>
+	</class>	
+
+	<!-- Events -->
+
+	<class name="org.jvending.provisioning.model.event.Event" table="event"
+		catalog="devevents">
+		<id name="primaryId" column="pid" type="integer">
+			<generator class="native" />
+		</id>
+		<version name = "version" column="version_timestamp" type="timestamp"/>
+
+		<property name="eventType" column="event_type" type="integer" not-null="true"/>	
+		<property name="eventCode" column="event_code" type="integer" />	
+						
+		<component name="androidDeviceInfo"
+			class="org.jvending.provisioning.model.event.AndroidDeviceInfo">
+			<property name="userAgent" column="user_agent"
+				type="string" />			
+			<property name="networkOperator" column="network_operator"
+				type="string" />
+			<property name="networkOperatorName" column="network_operator_name"
+				type="string" />
+			<property name="networkCountryIso" column="network_country_iso"
+				type="string" />
+			<property name="deviceSoftwareVersion" column="software_version"
+				type="string" />
+			<property name="phoneType" column="phone_type" type="string" />
+			<property name="networkType" column="network_type" type="string" />
+			<property name="simCountryIso" column="sim_country_iso"
+				type="string" />
+			<property name="deviceId" column="device_id" type="string" />
+			<property name="simOperator" column="sim_operator" type="string" />
+			<property name="simSerialNumber" column="sim_serial_number"
+				type="string" />
+			<property name="subscriberId" column="subscriber_id" type="string" />
+			<property name="networkRoaming" column="network_roaming"
+				type="boolean" />
+		    <property name="brand" column="brand" type="string" />
+		    <property name="device" column="device" type="string" />
+		    <property name="host" column="host" type="string" />
+		    <property name="buildId" column="build_id" type="string" />
+		    <property name="model" column="model" type="string" />
+		    <property name="product" column="product" type="string" />
+		    <property name="sdkVersion" column="sdk_version" type="string" />
+		    <property name="display" column="display" type="string" />
+		    <property name="clientVersion" column="client_version" type="string" />
+		</component>
+
+		<joined-subclass
+			name="org.jvending.provisioning.model.deliveryevent.DeliveryEvent"
+			table="delivery_event" catalog="devevents">
+			<key column="fk_event_pid" />
+			<property name="networkId" column="network_id" type="string" />
+			<property name="userId" column="user_id" type="string" />
+			<property name="fulfillmentId" column="fulfillment_id" type="string"
+				not-null="true" />
+			<property name="adapterName" column="adapter_name" type="string" />
+			<property name="description" column="description" type="string" />
+			<property name="code" column="code" type="int" />
+			<property name="type" column="type" type="int" />
+
+			<list name="deviceCapabilities" table="device_capabilities"
+				catalog="devevents">
+				<key column="fk_delivery_event_pid" />
+				<index column="id" type="integer" />
+				<composite-element
+					class="org.jvending.provisioning.model.deliveryevent.DeviceCapability">
+					<property name="name" column="name" type="string"
+						not-null="true" />
+					<property name="value" column="value" type="string" />
+				</composite-element>
+			</list>
+		</joined-subclass>
+
+	</class>
+
+	<class
+		name="org.jvending.provisioning.model.fulfillmenttask.FulfillmentTaskObject"
+		table="fulfillment_task" catalog="devevents">
+		<cache usage="nonstrict-read-write"/>
+		<id name="primaryId" column="pid" type="integer">
+			<generator class="native" />
+		</id>
+		<version name = "version" column="version_timestamp" type="timestamp"/>
+		<property name="fulfillmentID" column="fulfillment_id" type="string"
+			not-null="true" />
+		<property name="expiryTime" column="expiry_time" type="long" />
+		<property name="bundleDescriptorId" column="bundle_descriptor_id"
+			type="string" not-null="true" />
+	</class>
+</hibernate-mapping>
+
+

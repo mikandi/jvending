@@ -1,0 +1,135 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://java.sun.com/xml/ns/j2ee-cp" xmlns:j2ee-cp="http://java.sun.com/xml/ns/j2ee-cp"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified" version="1.0">
+
+	<xsd:annotation>
+		<xsd:documentation>
+
+			Copyright 2003 Sun Microsystems, Inc. All rights reserved.
+			SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+
+			This is the XML schema for the J2EE Client Provisioning 1.0
+			matchers
+			configuration file.
+
+			All matchers configuration files must indicate this XML
+			schema by using
+			the reserved namespace
+
+			http://java.sun.com/xml/ns/j2ee-cp
+
+			as shown below:
+
+			<matchers xmlns="http://java.sun.com/xml/ns/j2ee-cp"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee-cp Matchers_1_0.xsd">
+				...
+			</matchers>
+
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:element name="matchers" type="j2ee-cp:matchersType">
+		<xsd:annotation>
+			<xsd:documentation>
+				The matchers element contains the configuration information
+				for all the
+				matchers in the provisioning server. This element
+				is the root element for the matchers configuration file.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:unique name="attribute-name-uniqueness">
+			<xsd:annotation>
+				<xsd:documentation>
+					There is only one matcher per attribute.
+    				</xsd:documentation>
+			</xsd:annotation>
+			<xsd:selector xpath="j2ee-cp:matcher" />
+			<xsd:field xpath="j2ee-cp:attribute-name" />
+		</xsd:unique>
+	</xsd:element>
+	<xsd:complexType name="matchersType">
+		<xsd:sequence>
+			<xsd:element ref="j2ee-cp:matcher" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="matcher" type="j2ee-cp:matcherType">
+		<xsd:annotation>
+			<xsd:documentation>
+				The matcher element contains the configuration information
+				for a single
+				matcher in the provisioning server.
+    			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:unique name="parameter-name-uniqueness">
+			<xsd:annotation>
+				<xsd:documentation>
+					Initialization parameters are unique by name
+					per
+					matcher.
+    				</xsd:documentation>
+			</xsd:annotation>
+			<xsd:selector xpath="j2ee-cp:init-param" />
+			<xsd:field xpath="j2ee-cp:param-name" />
+		</xsd:unique>
+	</xsd:element>
+	<xsd:complexType name="matcherType">
+		<xsd:sequence>
+			<xsd:element ref="j2ee-cp:attribute-name" />
+			<xsd:element ref="j2ee-cp:matcher-class" />
+			<xsd:element ref="j2ee-cp:init-param" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="attribute-name" type="xsd:string">
+
+		<xsd:annotation>
+			<xsd:documentation>
+				The name of the attribute for this matcher. This
+				name is unique amongst
+				the other matcher names in the matcher
+				configuration file.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="matcher-class" type="xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+				The fully qualified Java classname for this matcher.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="init-param">
+		<xsd:annotation>
+			<xsd:documentation>
+				This element is used to contain
+				a single initialization parameter.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="j2ee-cp:param-name" />
+				<xsd:element ref="j2ee-cp:param-value" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="param-name" type="xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+				The name of this initialization parameter. The name
+				of this initialation
+				parameter must be unique
+				within the matcher.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="param-value" type="xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>
+				The value of this initialization parameter. 
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+</xsd:schema>

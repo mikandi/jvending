@@ -1,0 +1,251 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!--Conforms to w3c http://www.w3.org/2000/10/XMLSchema-->
+<xsd:schema  xmlns="http://www.w3.org/2001/XMLSchema"
+     targetNamespace="http://java.sun.com/xml/ns/j2ee-cp"
+     xmlns:j2ee-cp="http://java.sun.com/xml/ns/j2ee-cp"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     elementFormDefault="qualified"
+     attributeFormDefault="unqualified"
+     version="1.0">
+
+	<xsd:annotation>
+    		<xsd:documentation>
+    			Copyright 2003 Sun Microsystems, Inc. All rights reserved.
+ 			SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+			
+			This is the XML schema for the J2EE Client Provisioning 1.0
+			device configuration file.
+
+			All device configuration filesmust indicate the devices
+			schema by using the reserved namespace
+		
+				http://java.sun.com/xml/ns/j2ee-cp
+
+			as shown below:
+
+			<devices xmlns="http://java.sun.com/xml/ns/j2ee-cp"
+ 				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ 				xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee-cp Devices_1_0.xsd">   
+			 ...
+			</devices>
+
+    		</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name = "devices" type="j2ee-cp:devicesType">
+		<xsd:annotation>
+    			<xsd:documentation>
+				The devices element contains the capability descriptions of all
+				the devices and mappings to HTTP headers used to match
+				an HTTP request to a device description.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:complexType name="devicesType">
+		<xsd:sequence>
+			<xsd:element ref = "j2ee-cp:device" maxOccurs = "unbounded"/>
+			<xsd:element ref = "j2ee-cp:device-mapping" minOccurs = "0" maxOccurs = "unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name = "device-mapping">
+		<xsd:annotation>
+    			<xsd:documentation>
+				A device mapping element contains a list of mappings 
+				from HTTP request headers to a devices, keyed by its 
+				identifier. The device mapping element contains the 
+				explicit resolution rule for multiple HTTP headers. 
+				The identifier within a device-mapping 
+				element must be one of the identifiers declared in 
+				a device declaration. Each device mapping is pair 
+				consisting of the identifier and a list of expressions 
+				containing matching rules against HTTP header values.
+				An expresssion may itself be a request-mapping, or it 
+				may be a collection of request mappings inside a match* 
+				element. The match* element dicates the resolution 
+				rule for all the expression it itself contains.
+    			</xsd:documentation>
+		</xsd:annotation>
+
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:identifier"/>
+				<xsd:choice>
+					<xsd:element ref = "j2ee-cp:request-mapping"/>
+					<xsd:element ref = "j2ee-cp:match-all"/>
+					<xsd:element ref = "j2ee-cp:match-any"/>
+					<xsd:element ref = "j2ee-cp:match-not"/>
+				</xsd:choice>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "match-all">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The match-all element is used to contain multiple
+				expressions which must all match the HTTP request to
+				be satisfied
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:choice maxOccurs = "unbounded">
+				<xsd:element ref = "j2ee-cp:request-mapping"/>
+				<xsd:element ref = "j2ee-cp:match-any"/>
+				<xsd:element ref = "j2ee-cp:match-not"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "match-not">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The match-not element is used to contain multiple
+				expressions which only satifiy the HTTP request if none of the
+				expressions are satisfied.
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:choice>
+				<xsd:element ref = "j2ee-cp:request-mapping"/>
+				<xsd:element ref = "j2ee-cp:match-all"/>
+				<xsd:element ref = "j2ee-cp:match-any"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "match-any">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The match-any element is used to contain multiple
+				expressions which satifiy the HTTP request only if one or
+				more of the expressions is satisifed
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:choice maxOccurs = "unbounded">
+				<xsd:element ref = "j2ee-cp:request-mapping"/>
+				<xsd:element ref = "j2ee-cp:match-all"/>
+				<xsd:element ref = "j2ee-cp:match-not"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "request-mapping">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The request-mapping element is used to define
+				a matching constraint on a single HTTP header
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:header-name"/>
+				<xsd:element ref = "j2ee-cp:header-value"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "header-name" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The header-name element contains the name of
+				the HTTP header used to evaluate the header match
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "header-value" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The header-value element contains a regular expression
+				used to match the header value. The rules for regular expressions are
+				defined by the javax.util.regex API documentation in J2SE 1.4.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "device" type="j2ee-cp:deviceType">
+		<xsd:annotation>
+    			<xsd:documentation>
+				The device element contains the capability descriptions
+				of a class of device. Each device is uniquely determined
+				by its identifier. The capabilities given by the
+				capability elements within a device element define
+				the capabilities of all the devices whose identifier
+				is listed.
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:unique name="adapter-name-uniqueness">
+    			<xsd:annotation>
+    				<xsd:documentation>
+    					Adapter names are unique within the device element
+			    	</xsd:documentation>
+			</xsd:annotation>
+			<xsd:selector xpath="j2ee-cp:device"/>
+			<xsd:field    xpath="j2ee-cp:adapter-name"/>
+		</xsd:unique>
+		<xsd:unique name="capability-name-uniqueness">
+    			<xsd:annotation>
+    				<xsd:documentation>
+    					Capability names are unique within the device element
+			    	</xsd:documentation>
+			</xsd:annotation>
+			<xsd:selector xpath="j2ee-cp:capability"/>
+			<xsd:field    xpath="j2ee-cp:capability-name"/>
+		</xsd:unique>
+		
+	</xsd:element>
+	<xsd:complexType name="deviceType">
+		<xsd:sequence>
+			<xsd:element ref = "j2ee-cp:identifier" maxOccurs = "unbounded"/>
+			<xsd:element ref = "j2ee-cp:adapter-name" minOccurs = "0" maxOccurs = "unbounded"/>
+			<xsd:element ref = "j2ee-cp:capability" minOccurs = "0" maxOccurs = "unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name = "identifier" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+				The identifier element contains a string that uniquely
+				determines a physical device type. The format of the string
+				is given by [Vendor]/[Model]. The value of this element
+				for a matching request is available by calling
+				DeliveryContext.getCapability(Constants.HARDWAREPLATFORM_DEVICEIDENTIFER);
+
+				Example: "Motorola/i50sx"
+
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "capability">
+		<xsd:annotation>
+    			<xsd:documentation>
+				A capability is a name value pair of a property the
+				device supports.
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:capability-name"/>
+				<xsd:element ref = "j2ee-cp:capability-value"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "capability-name" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+				The name of the capability supported. See sections 4.3 and 4.5.
+				The value of the capability-name element may not be
+				"HardwarePlatform.DeviceIdentifier" since the capability
+				value of that capability for this device is the 
+				value of the %lt;identifier&gt; element.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "capability-value" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+				The value of the capability supported. See sections 4.3 amd 4.5.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "adapter-name" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+				The name of an adapter that can be used to provision this device.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+</xsd:schema>

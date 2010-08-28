@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jvending.provisioning</groupId>
+    <version>2.2-SNAPSHOT</version>
+    <artifactId>j2ee-client-provisioning</artifactId>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jvending.provisioning</groupId>
+  <artifactId>provisioning-configs</artifactId>
+  <packaging>pom</packaging>
+  <name>provisioning-configs</name>
+  <modules>
+    <module>adapters</module>
+    <module>deliverables</module>
+    <module>devices</module>
+    <module>matchers</module>
+    <module>stockinghandlers</module>
+  </modules>
+</project>

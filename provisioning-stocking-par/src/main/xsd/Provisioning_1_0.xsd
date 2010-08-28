@@ -1,0 +1,494 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<!--
+ Copyright 2003 Sun Microsystems, Inc. All rights reserved.
+ SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+
+<!-- Conforms to w3c http://www.w3.org/2000/10/XMLSchema-->
+<xsd:schema  xmlns="http://www.w3.org/2001/XMLSchema"
+     targetNamespace="http://java.sun.com/xml/ns/j2ee-cp"
+     xmlns:j2ee-cp="http://java.sun.com/xml/ns/j2ee-cp"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     elementFormDefault="qualified"
+     attributeFormDefault="unqualified"
+     version="1.0">
+
+	<xsd:annotation>
+    		<xsd:documentation>
+    			Copyright 2003 Sun Microsystems, Inc. All rights reserved.
+ 			SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+			
+			This is the XML schema for the J2EE Client Provisioning 1.0
+			provisioning descriptor.
+			The provisioning descriptor must be named "META-INF/provisioning.xml"
+			in the provisioning archive (PAR).
+
+			All provisioning descriptors must indicate the provisioning
+			schema by using the reserved namespace
+		
+				http://java.sun.com/xml/ns/j2ee-cp
+
+			as shown below:
+
+			<provisioning-archive xmlns="http://java.sun.com/xml/ns/j2ee-cp"
+ 				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ 				xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee-cp Provisioning_1_0.xsd">
+			 ...
+			</provisioning-archive>
+    		</xsd:documentation>
+
+	</xsd:annotation>
+
+	<xsd:element name = "provisioning-archiveType">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The provisioning-archive element is the root of the provisioning
+				descriptor.
+
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+		<xsd:sequence>
+			<xsd:element ref = "j2ee-cp:tool-descriptions" minOccurs = "0"/>
+			<xsd:element ref = "j2ee-cp:client-bundle" maxOccurs = "unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name = "tool-descriptions">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The tool-descriptions element contains information that the
+				developer wishes to expose to stocking tools. When used as a child
+				element of provisioning-archive, it provides information about the
+				entire archive. When used as a child element of client-bundle it
+				provides information specific to a particular bundle. 
+
+				Used in: provisioning-archive, client-bundle
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:description" minOccurs = "0" maxOccurs = "unbounded"/>
+				<xsd:element ref = "j2ee-cp:display-name" minOccurs = "0" maxOccurs = "unbounded"/>
+				<xsd:element ref = "j2ee-cp:icon" minOccurs = "0" maxOccurs = "unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "client-bundle" type = "j2ee-cp:client-bundleType">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The client-bundle element contains information about a client
+				bundle that the developer or stocker wishes to communicate to the
+				provisioning server.
+
+				Used in: provisioning-archive
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:unique name="catalog-property-name-uniqueness">
+    			<xsd:annotation>
+    				<xsd:documentation>
+					Catalog properties are unique by name per client bundle.
+    				</xsd:documentation>
+    			</xsd:annotation>
+    			<xsd:selector xpath="j2ee-cp:catalog-property"/>
+    			<xsd:field    xpath="j2ee-cp:property-name"/>
+		</xsd:unique>
+		<xsd:unique name="requirement-name-uniqueness">
+    			<xsd:annotation>
+    				<xsd:documentation>
+					Device requirements are unique by name per client bundle.
+    				</xsd:documentation>
+    			</xsd:annotation>
+    			<xsd:selector xpath="j2ee-cp:device-requirement"/>
+    			<xsd:field    xpath="j2ee-cp:requirement-name"/>
+		</xsd:unique>
+	
+	</xsd:element>
+	<xsd:complexType name = "client-bundleType">
+		<xsd:sequence>
+			<xsd:element ref = "j2ee-cp:content-id"/>
+			<xsd:element ref = "j2ee-cp:version" minOccurs = "0"/>
+			<xsd:element ref = "j2ee-cp:bundle-type"/>
+			<xsd:choice>
+				<xsd:element ref = "j2ee-cp:descriptor-file"/>
+				<xsd:element ref = "j2ee-cp:content-file"/>
+			</xsd:choice>
+			
+			<xsd:element ref = "j2ee-cp:tool-descriptions" minOccurs = "0"/>
+			<xsd:element ref = "j2ee-cp:user-descriptions" minOccurs = "0"/>
+			<xsd:element ref = "j2ee-cp:preview" minOccurs = "0" maxOccurs = "unbounded"/>
+			<xsd:element ref = "j2ee-cp:vendor-info" minOccurs = "0"/>
+			<xsd:element ref = "j2ee-cp:copyright" minOccurs = "0" maxOccurs = "unbounded"/>
+			<xsd:element ref = "j2ee-cp:device-requirement" minOccurs = "0" maxOccurs = "unbounded"/>
+			<xsd:element ref = "j2ee-cp:catalog-property" minOccurs = "0" maxOccurs = "unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name = "content-id" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				Each client-bundle has a logical identifier for the content that
+				it represents. There can be different versions of the content as
+				it is maintained or enhanced over time. Also there can
+				be different variants of the content targetted at different locales or 
+				at different classes of client device. In all these cases, the versions
+				and variants would be different bundles all of which have the same
+				content-id. 
+
+				The content-id should be chosen by the developer in such a way 
+				that it is highly unlikely to clash with any other content's 
+				content-id. One good way to do this is to use a URL that might
+				point to information about the content on the developer's web
+				site.
+
+				Used in: provisioning-archive
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "version" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The version element contains a string indicating the version of the 
+				content which is represented by this bundle, e.g. 1.1.2.
+				If the version element is missing, or the version element
+				does not contain a version string, the bundle has no version
+				and must be treated by the provisioning framework as having a lower
+				version than bundles with the same app ID, but that do have a version.
+
+				Used in: provisioning-archive
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "descriptor-file">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The descriptor-file element. The text contents of this element 
+				should be a URI for the descriptor file. The URI may be absolute (that
+				is, it may have a scheme such as "http://"), indicating that the
+				descriptor file is not inside the PAR file. Otherwise, it is
+				interpreted relative to the PAR file root.
+
+				Used in: client-bundle
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "mime-type" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "bundle-type">
+		<xsd:annotation>
+    			<xsd:documentation>
+				The bundle-type element contains a string that categorizes the
+				type of content held in the bundle. 
+
+				Used in: client-bundle    			
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base = "xsd:string">
+				<xsd:enumeration value = "RINGTONE"/>
+				<xsd:enumeration value = "SCREENSAVER"/>
+				<xsd:enumeration value = "WALLPAPER"/>
+				<xsd:enumeration value = "TEXT_MESSAGE"/>
+				<xsd:enumeration value = "MEDIA_MESSAGE"/>
+				<xsd:enumeration value = "LOGO"/>
+				<xsd:enumeration value = "AUDIO"/>
+				<xsd:enumeration value = "VIDEO"/>
+				<xsd:enumeration value = "MARKUP"/>
+				<xsd:enumeration value = "TEXT"/>
+				<xsd:enumeration value = "IMAGE"/>
+				<xsd:enumeration value = "ICON"/>
+				<xsd:enumeration value = "ANIMATION"/>
+				<xsd:enumeration value = "UNCLASSIFIED"/>
+				<xsd:enumeration value = "APPLICATION"/>
+				<xsd:enumeration value = "SPEECH"/>
+				<xsd:enumeration value = "SKIN"/>
+				<xsd:enumeration value = "V_CARD"/>
+				<xsd:enumeration value = "V_CALENDAR"/>
+				<xsd:enumeration value = "BOOKMARK"/>
+				<xsd:enumeration value = "LIBRARY"/>
+				<whiteSpace value = "collapse"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name = "content-file">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The content-file element. The text contents of this element should be
+				a URI for the content file. The URI may be absolute (that is, it may
+				have a scheme such as "http://"), indicating that the content file is
+				not inside the PAR file. Otherwise, it is interpreted relative to the
+				PAR file root.
+
+				Used in: client-bundle
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "mime-type" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "user-descriptions">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The user-descriptions element contains information about the
+				client bundle supplied by the bundle developer that can be shown by
+				the provisioning server to the user of the client bundle. The
+				description, display names and icons indicate their localisation
+				properties.
+
+				Used in: client-bundle
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:display-name" minOccurs = "0" maxOccurs = "unbounded"/>
+				<xsd:element ref = "j2ee-cp:description" minOccurs = "0" maxOccurs = "unbounded"/>
+				<xsd:element ref = "j2ee-cp:icon" minOccurs = "0" maxOccurs = "unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "description">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The description element contains a human readable string. The locale
+				attribute indicates the locale of the description.
+
+				Used in: tool-descriptions, user-descriptions
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "locale" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "display-name">
+		<xsd:annotation>
+    			<xsd:documentation>
+				The display-name element contains a string that can be used to name a
+				component in a tool. The locale attribute indicates the locale of the
+				name.
+
+				Used in: tool-descriptions, user-descriptions
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "locale" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "icon">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The icon element contains a relative URI to an icon in the same
+				archive. The locale attribute indicates the locale of the
+				description.
+
+				Used in: tool-descriptions, user-descriptions
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "locale" type = "xsd:string"/>
+					<xsd:attribute name = "mime-type" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "device-requirement">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The device-requirement elements contain all the dependencies that the
+				client bundle has on the capabilities of client devices.
+
+				Used in: client-bundle
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:requirement-name"/>
+				<xsd:element ref = "j2ee-cp:requirement-value"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "requirement-name" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The name of the device requirement. The standard properties are
+				given in 4.3 and 4.5 of this specification.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "requirement-value" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The value of the device requirement. The standard properties are
+				given in 4.3 and 4.5 of this specification.
+
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "vendor-info">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The vendor info element contains information about the 
+				vendor of the client bundle.
+
+				Used in: client-bundle
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:vendor-name"/>
+				<xsd:element ref = "j2ee-cp:vendor-url" minOccurs = "0"/>
+				<xsd:element ref = "j2ee-cp:vendor-description" minOccurs = "0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "vendor-name">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The name of the bundle's vendor.
+
+				Used in: vendor-info
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "locale" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "vendor-description">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The vendor-description gives a textual description of the vendor
+				of this bundle.
+
+				Used in: vendor-info
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "locale" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "vendor-url">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The vendor-url gives an external URL to a web site.  This URL should
+				be suitable for giving a user more information about the vendor.
+
+				Used in: vendor-info
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "locale" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "catalog-property">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The portal may define various catalog properties it uses to organize
+				bundles. For example, it could use catalog properties to assign
+				bundles into categories understandable to users, or it
+				could use them to indicate the billing model to be used for each
+				bundle.
+
+				Catalog properties are unique by name. It is an error to have
+				two catalog properties of the same name in a bundle.
+
+				Used in: client-bundle
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref = "j2ee-cp:property-name"/>
+				<xsd:element ref = "j2ee-cp:property-value"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "property-name" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The name of the property.
+
+				Used in: catalog-property
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "property-value" type = "xsd:string">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The value of the property.
+
+				Used in: catalog-property.
+    			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name = "copyright">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				A copyright element contains a copyright notice for this bundle
+				that may be shown to the user. If a uri attribute is present
+				this indicates an archive entry name
+				of the copyright notice as a text file. The
+				presence of the uri attribute loads the notice from
+				that entry in preference to the text node.
+				The locale attribute indicates the
+				locale of the copyright notice. 
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "uri" type = "xsd:string"/>
+					<xsd:attribute name = "locale" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name = "preview">
+		<xsd:annotation>
+    			<xsd:documentation>
+    				The preview element contains the URI of some content file
+				that can be displayed to the user as a preview of the bundle.
+
+				Used in: client-bundle
+    			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute name = "locale" type = "xsd:string"/>
+					<xsd:attribute name = "mime-type" type = "xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

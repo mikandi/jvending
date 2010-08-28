@@ -1,0 +1,30 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://jvending.org/xsd/jvending-cp"
+            xmlns:jvending-cp="http://jvending.org/xsd/jvending-cp"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified"
+            version="1.0">
+  <xsd:element name="deliverables" type="jvending-cp:deliverablesType"/>
+  <xsd:complexType name="deliverablesType">
+    <xsd:sequence>
+      <xsd:element ref="jvending-cp:deliverable" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="deliverable" type="jvending-cp:deliverableType">
+    <xsd:unique name="deliverable-class-uniqueness">
+      <xsd:selector xpath="jvending-cp:deliverable"/>
+      <xsd:field xpath="jvending-cp:deliverable-class"/>
+    </xsd:unique>
+  </xsd:element>
+  <xsd:complexType name="deliverableType">
+    <xsd:sequence>
+      <xsd:element ref="jvending-cp:deliverable-class" minOccurs="1" maxOccurs="1"/>
+      <xsd:element ref="jvending-cp:mime-type" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="mime-type" type="xsd:string"/>
+  <xsd:element name="deliverable-class" type="xsd:string"/>
+</xsd:schema>
+
