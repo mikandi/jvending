@@ -8,17 +8,17 @@
 	<name>j2ee-client-provisioning</name>
 	<url>http://code.google.com/p/jvending/</url>
 	<description>
-        JVending is a P2P (JXTA) mobile content provisioning system that implements most of the J2EE
+        JVending is a mobile content provisioning system that implements most of the J2EE
         Client Provisioning Specification (JSR-124).
     </description>
 	<scm>
-		<url>http://jvending.googlecode.com/svn/trunk</url>
-		<connection>scm:svn:http://jvending.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://jvending.googlecode.com/svn/trunk</developerConnection>
+		<url>http://github.com/sisbell/jvending/tree/b9e59c03e824e162da58ae84976fd0ffa17e922a</url>
+		<connection>scm:git:git@github.com:sisbell/jvending.git</connection>
+		<developerConnection>scm:git:git@github.com:sisbell/jvending.git</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>Issue Tracking</system>
-		<url>http://code.google.com/p/jvending/issues/list</url>
+		<url>http://github.com/sisbell/jvending/issues</url>
 	</issueManagement>
 	<licenses>
 		<license>
@@ -59,8 +59,6 @@
 	</dependencies>
 	<properties>
 		<jaxme.version>0.5.2</jaxme.version>
-		<jettyVersion>6.1.3</jettyVersion>
-		<xfireVersion>1.2.5</xfireVersion>
 		<jaxbVersion>2.1</jaxbVersion>
 		<tomcatVersion>5.5.9</tomcatVersion>
 	</properties>
@@ -82,21 +80,6 @@
 				<version>1.3</version>
 			</dependency>
 			<dependency>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty</artifactId>
-				<version>${jettyVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-embedded</artifactId>
-				<version>${jettyVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>servlet-api-2.5</artifactId>
-				<version>${jettyVersion}</version>
-			</dependency>
-			<dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>servlet-api</artifactId>
 				<version>2.5</version>
@@ -111,17 +94,6 @@
 				<groupId>commons-fileupload</groupId>
 				<artifactId>commons-fileupload</artifactId>
 				<version>1.2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>jstl</groupId>
-				<artifactId>jstl</artifactId>
-				<version>1.1.2</version>
-			</dependency>
-			<dependency>
-				<groupId>taglibs</groupId>
-				<artifactId>standard</artifactId>
-				<version>1.1.2</version>
-				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>tomcat</groupId>
@@ -199,17 +171,6 @@
 				<groupId>xmlpull</groupId>
 				<artifactId>xmlpull</artifactId>
 				<version>1.1.3.4a</version>
-			</dependency>
-			<!-- XFire -->
-			<dependency>
-				<groupId>org.codehaus.xfire</groupId>
-				<artifactId>xfire-plexus</artifactId>
-				<version>${xfireVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.xfire</groupId>
-				<artifactId>xfire-java5</artifactId>
-				<version>${xfireVersion}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
