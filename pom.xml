@@ -22,7 +22,7 @@
 	</issueManagement>
 	<licenses>
 		<license>
-			<name>LGPL 2.1</name>
+			<name>ASL 2.0</name>
 			<url>LICENSE.txt</url>
 		</license>
 	</licenses>
@@ -160,13 +160,6 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<configuration>
-					<outputDirectory>../target</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
