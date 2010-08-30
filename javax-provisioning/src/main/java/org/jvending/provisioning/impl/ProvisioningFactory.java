@@ -22,8 +22,6 @@ package org.jvending.provisioning.impl;
  * @since 2.0.0
  */
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.provisioning.BundleDescriptor;
@@ -47,14 +44,10 @@ import javax.provisioning.adapter.Adapter;
 import javax.provisioning.adapter.AdapterContext;
 import javax.provisioning.adapter.AdapterException;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.jvending.provisioning.deliverable.BaseDeliverable;
 import org.jvending.provisioning.deliverable.BaseDescriptorFile;
 import org.jvending.provisioning.model.event.AndroidDeviceInfo;
-import org.jvending.provisioning.stocking.par.ProvisioningArchiveType;
 
 public final class ProvisioningFactory {
 
@@ -111,22 +104,6 @@ public final class ProvisioningFactory {
 
     static Capabilities createEmptyCapabilities() {
         return new EmptyCapabilities();
-    }
-
-    static ProvisioningArchiveType createProvisioningArchive(InputStream is) throws IOException {
-        if (is == null) {
-            logger.info("JV-1501-012: No provisioning descriptor");
-            throw new IOException("JV-1501-012: No provisioning descriptor");
-        }
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance("org.jvending.provisioning.stocking.par");
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-           // unmarshaller.setValidating(true);
-            return (ProvisioningArchiveType) unmarshaller.unmarshal(is);
-        } catch (JAXBException e) {
-            logger.log(Level.INFO, "JV-1501-013: Parsing exception for provisioning descriptor", e);
-            throw new IOException("JV-1501-013: Parsing exception for provisioning descriptor");
-        }
     }
     
     private static Map<String, String> toMap(HttpServletRequest request) {

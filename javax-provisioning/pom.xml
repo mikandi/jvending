@@ -16,12 +16,6 @@
 			<artifactId>plexus-utils</artifactId>
 			<version>2.0.1</version>
 		</dependency>
-		<!--  
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-		</dependency>
-		-->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -34,11 +28,13 @@
 			<groupId>xmlpull</groupId>
 			<artifactId>xmlpull</artifactId>
 		</dependency>
+		<!--  
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>2.5.0</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
@@ -81,22 +77,10 @@
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jvending.provisioning</groupId>
-			<artifactId>provisioning-config-stockinghandlers</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jvending.provisioning</groupId>
-			<artifactId>provisioning-stocking-par</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>net.java.dev.jets3t</groupId>
 			<artifactId>jets3t</artifactId>
 			<version>0.7.2</version>
 		</dependency>
-		<!-- Messaging -->
 		
 	</dependencies>
 	<build>

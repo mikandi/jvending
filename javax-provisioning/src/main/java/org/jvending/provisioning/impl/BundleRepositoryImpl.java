@@ -15,17 +15,13 @@
  */
 package org.jvending.provisioning.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Stack;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +32,6 @@ import javax.provisioning.Capabilities;
 import javax.provisioning.Constants;
 import javax.provisioning.MatchPolicy;
 import javax.provisioning.ProvisioningContext;
-import javax.provisioning.ProvisioningException;
 import javax.provisioning.matcher.AttributeMatcher;
 import javax.provisioning.matcher.MatcherException;
 import javax.servlet.ServletContext;
@@ -47,16 +42,6 @@ import org.jvending.provisioning.config.DeliverableRepository;
 import org.jvending.provisioning.config.MimeTypeRepository;
 import org.jvending.provisioning.dao.BundleDescriptorDAO;
 import org.jvending.provisioning.dao.ClientBundleDAO;
-import org.jvending.provisioning.dao.impl.ParDAOImpl;
-import org.jvending.provisioning.model.clientbundle.ClientBundle;
-import org.jvending.provisioning.stocking.DataSink;
-import org.jvending.provisioning.stocking.filter.FormatFilter;
-import org.jvending.provisioning.stocking.handler.StockingHandlerConfig;
-import org.jvending.provisioning.stocking.par.CatalogProperty;
-import org.jvending.provisioning.stocking.par.ClientBundleType;
-import org.jvending.provisioning.stocking.par.ProvisioningArchiveType;
-import org.jvending.registry.hibernate.HibernateDAORegistry;
-
 
 /**
  * Implementation of the BundleRepository and DataSink.
@@ -67,15 +52,13 @@ import org.jvending.registry.hibernate.HibernateDAORegistry;
 
 //TODO: Add back in BundleRepositoryUpdater
 
-public final class BundleRepositoryImpl implements BundleRepository, DataSink {
+public final class BundleRepositoryImpl implements BundleRepository {
 
     private static Logger logger = Logger.getLogger("org.jvending.provisioning.impl.BundleRepositoryImpl");//20
 
     private AttributeMatcherRepository attributeRepository;
 
     private BundleDescriptorDAO bundleDescriptorDAO;
-
-    private ClientBundleDAO clientBundleDAO;
 
     private ProvisioningContext provisioningContext;
 
@@ -84,8 +67,6 @@ public final class BundleRepositoryImpl implements BundleRepository, DataSink {
     private MimeTypeRepository mimeTypeRepository;
 
     private DeliverableRepository deliverableRepository;
-
-    private StockingHandlerConfig stockingHandlerConfig;
 
     private String contentDeliveryUri;
 
@@ -99,7 +80,6 @@ public final class BundleRepositoryImpl implements BundleRepository, DataSink {
 
     public BundleRepositoryImpl(ClientBundleDAO clientBundleDAO,
                                 BundleDescriptorDAO bundleDescriptorDAO,
-                                ParDAOImpl parDAO,
                                 AttributeMatcherRepository attributeMatcherRepository,
                                 MimeTypeRepository mimeTypeRepository,
                                 DeliverableRepository deliverableRepository,
@@ -113,7 +93,6 @@ public final class BundleRepositoryImpl implements BundleRepository, DataSink {
 
   //      this.parDAO = parDAO;
         this.bundleDescriptorDAO = bundleDescriptorDAO;
-        this.clientBundleDAO = clientBundleDAO;
 
         if (attributeRepository == null) {
             logger.severe("JV-1501-001: No AttributeMatcherRepository found.");
@@ -322,93 +301,9 @@ public final class BundleRepositoryImpl implements BundleRepository, DataSink {
         return 0.0f;
     }
 
-    public void removeParFile(long parFileID) throws IOException {//TODO: Implement
-        List<Long> list = new ArrayList<Long>();
-        list.add(new Long(parFileID));
-        //  parDAO.delete(list);
-    }
-
-    /**
-     * Adds PAR file. Under the spec, with this method, we are required to either stock the PAR file or fail it.
-     * We can not manipulate the PAR file. Since we do not have JNLP support, a adding a PAR file with JNLP will
-     * fail. Hence, use the StockingHandler to remove JNLP files until such a time as JNLP support is added.
-     *
-     * @param inputStream
-     * @return parId
-     * @throws IOException
-     */
-	public long addParFile(InputStream inputStream) throws IOException {
-        if (stockingHandlerConfig == null)
-            throw new IOException("JV-1501-011: StockingHandlerConfig has not been set.");
-
-        if (inputStream == null) {
-            logger.info("JV-1501-010: Stocking failed: PAR is null.");
-            throw new IOException("JV-1501-010: Stocking failed: PAR is null.");
-        }
-
-        Map<String, byte[]> contentMap =
-                StockingFactory.createContentMap(inputStream, stockingHandlerConfig.getInitParameter("par-file-output"));
-        byte[] content = contentMap.get("META-INF/provisioning.xml");
-        if(content == null) {
-        	logger.info(contentMap.toString());
-            logger.info("JV-1501-010: Stocking failed: provisioning.xml file not found:" + stockingHandlerConfig.getInitParameter("par-file-output"));
-            throw new IOException("JV-1501-010a: Stocking failed: provisioning.xml file not found..");       	
-        }
-        ProvisioningArchiveType archive = StockingFactory.createProvisioningArchive(new ByteArrayInputStream(content));
-
-        //We are using this outside the context of the handler framework, so  filterTaskkeep a close eye on the implementation.
-        new FormatFilter().doFilter(StockingFactory.createFilterTask(null, null, null, null, archive));
-
-        List<ClientBundleType> clientBundleTypes = archive.getClientBundle();
-        List<ClientBundle> clientBundles = new ArrayList<ClientBundle>();
-        long parId = UUID.randomUUID().hashCode();
-        logger.info("JV-000-xxx: Number of bundles = " + clientBundleTypes);
-        for (ClientBundleType clientBundleType : clientBundleTypes) {
-            ClientBundle clientBundle;
-            
-            try {
-                clientBundle = ClientBundleTranslator.translate(clientBundleType, contentMap,
-                        stockingHandlerConfig, mimeTypeRepository);
-            } catch (ProvisioningException e) {
-                logger.info("JV-1501-020: Can not process ClientBundle: Message = " + e.getMessage());
-                throw new IOException("JV-1501-020: Can not process ClientBundle: Message = " + e.getMessage());
-            }
-            
-            clientBundle.setParId(parId);
-            String bundleId = UUID.randomUUID().toString();
-            String check = new String(bundleId);
-            if(clientBundleType.getCatalogProperty() != null) {
-            	for(CatalogProperty cp : clientBundleType.getCatalogProperty()) {
-            		if("JVending.Internal.BundleId".equals(cp.getPropertyName())) {
-            			bundleId = cp.getPropertyValue();
-            			break;
-            		}
-            	}
-            }
-                 
-            clientBundle.setBundleId(bundleId);
-            clientBundles.add(clientBundle);
-        }
-
-        //Store in datasource
-        if (clientBundleDAO == null) {//this is a DataSink request so let's set it now
-            HibernateDAORegistry hibernateDAORegistry = (HibernateDAORegistry) stockingHandlerConfig.getStockingContext()
-                    .getServletContext().getAttribute("org.jvending.registry.hibernate.HibernateDAORegistry");
-            clientBundleDAO = (ClientBundleDAO) hibernateDAORegistry.find("dao:client-bundle");
-        }
-
-        clientBundleDAO.store(clientBundles);
-
-        return parId;
-    }
-
+ 
     public void emptyRepository() throws IOException {//TODO: Add this method back
         //parDAO.deleteAll();
-    }
-
-
-    public void init(StockingHandlerConfig config) {
-        this.stockingHandlerConfig = config;
     }
 
     public String getDataSinkName() {

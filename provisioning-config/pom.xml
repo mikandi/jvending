@@ -15,6 +15,5 @@
     <module>deliverables</module>
     <module>devices</module>
     <module>matchers</module>
-    <module>stockinghandlers</module>
   </modules>
 </project>

@@ -16,7 +16,6 @@
 package javax.provisioning;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,8 +29,6 @@ import java.util.List;
 
 public interface BundleRepository {
 
-    long addParFile(InputStream inputStream) throws IOException;
-
     void emptyRepository() throws IOException;
 
     BundleDescriptor getBundleByID(String bundleID);
@@ -42,15 +39,11 @@ public interface BundleRepository {
     Collection<BundleDescriptor> getBundlesFor(Capabilities deviceCapabilities, List<MatchPolicy> matchPolicies,
                                     boolean allVersions, boolean allVariants) throws IOException;
     
-
-    
     Collection<BundleDescriptor> getBundlesFor(Capabilities deviceCapabilities, List<MatchPolicy> matchPolicies, long EventId) throws IOException;
 
     float matchAttribute(String attributeName, List<String> requirementValues,
                                 List<String> capabilityValues);
 
-    void removeParFile(long parFileID) throws IOException;
- 
     /**
      * Not in spec
      */

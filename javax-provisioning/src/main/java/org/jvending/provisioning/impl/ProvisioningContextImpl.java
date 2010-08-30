@@ -51,10 +51,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jets3t.service.S3Service;
-import org.jets3t.service.S3ServiceException;
-import org.jets3t.service.impl.rest.httpclient.RestS3Service;
-import org.jets3t.service.security.AWSCredentials;
 import org.jvending.provisioning.config.AdapterRepository;
 import org.jvending.provisioning.config.AttributeMatcherRepository;
 import org.jvending.provisioning.config.DeliverableRepository;
@@ -66,10 +62,6 @@ import org.jvending.provisioning.dao.ClientBundleDAO;
 import org.jvending.provisioning.dao.DeliveryEventDAO;
 import org.jvending.provisioning.dao.FulfillmentTaskDAO;
 import org.jvending.provisioning.model.fulfillmenttask.FulfillmentTaskObject;
-import org.jvending.provisioning.stocking.DataSink;
-import org.jvending.provisioning.stocking.StockingContext;
-import org.jvending.provisioning.stocking.StockingException;
-import org.jvending.provisioning.stocking.handler.StockingHandlerConfig;
 import org.jvending.registry.RepositoryRegistry;
 import org.jvending.registry.ServletRepositoryLoader;
 import org.jvending.registry.hibernate.HibernateDAORegistry;
@@ -97,8 +89,6 @@ public final class ProvisioningContextImpl implements ProvisioningContext, Adapt
     protected HibernateDAORegistry hibernateDaoRegistry;
 
     protected DeliveryComponent deliveryComponent;
-
-    private StockingContext stockingContext;
 
     private JVendingRepository jvendingRepository;
 
@@ -192,12 +182,6 @@ public final class ProvisioningContextImpl implements ProvisioningContext, Adapt
         servletContext.setAttribute("org.jvending.registry.hibernate.HibernateDAORegistry", hibernateDaoRegistry);
       //  servletContext.setAttribute("org.jets3t.service.S3Service", service);
         
-		
-        stockingContext = new StockingContextImpl();
-        stockingContext.init(servletContext);
-        logger.info("JV-1500-44a: Initialized StockingContext");
-        servletContext.setAttribute("org.jvending.provisioning.stocking", stockingContext);        
-
         logger.info("JV-1500-038: Sucessfully started the Provisioning Server Context");
     }
 
@@ -230,8 +214,6 @@ public final class ProvisioningContextImpl implements ProvisioningContext, Adapt
         servletContext.removeAttribute("javax.provisioning.ProvisioningContext");
         servletContext.removeAttribute("org.jvending.registry.RepositoryRegistry");
         servletContext.removeAttribute("org.jvending.registry.hibernate.HibernateDAORegistry");
-
-       if(stockingContext != null) stockingContext.destroy();
     }
 
     public FulfillmentTask createFulfillmentTask(BundleDescriptor bundleDescriptor,
@@ -307,19 +289,7 @@ public final class ProvisioningContextImpl implements ProvisioningContext, Adapt
 				}
             });
             t.start();
-            /*
-		try{
-			fulfillmentTaskDAO.store(taskObject);
-		} catch (IOException e) {
-			//fulfillmentTaskDAO.store(taskObject);
-			logger.log(Level.INFO,
-					"JV-1500-011: Could not create fulfillment task: AdapterName = "
-							+ adapterName, e);
-			throw new ProvisioningException(
-					"JV-1500-012: Could not create fulfillment task: AdapterName = "
-							+ adapterName);
-		}
-*/
+
 		return task;
 	}
     
@@ -429,17 +399,9 @@ public final class ProvisioningContextImpl implements ProvisioningContext, Adapt
         AttributeMatcherRepository matcherRepository = (AttributeMatcherRepository) repositoryRegistry.find("matchers");
         MimeTypeRepository mimeTypeRepository = (MimeTypeRepository) repositoryRegistry.find("mimetype");
         DeliverableRepository deliverableRepository = (DeliverableRepository) repositoryRegistry.find("deliverables");
-        DataSink dataSink = new BundleRepositoryImpl(clientBundleDAO, bundleDescriptorDAO,
-                null, matcherRepository, mimeTypeRepository, deliverableRepository, this);
+        return new BundleRepositoryImpl(clientBundleDAO, bundleDescriptorDAO,
+                matcherRepository, mimeTypeRepository, deliverableRepository, this);
 
-        StockingHandlerConfig config = null;
-        try {
-            config = stockingContext.getStockingHandler("GENERIC").getStockingHandlerConfig();
-        } catch (StockingException e) {
-            e.printStackTrace();
-        }
-        dataSink.init(config);
-        return (BundleRepository) dataSink;
 
     }
 

@@ -40,7 +40,6 @@
 	<modules>
 		<module>javax-provisioning</module>
 		<module>provisioning-config</module>
-		<module>provisioning-stocking-par</module>
 		<module>provisioning-model</module>	
 	</modules>
 	<dependencies>
@@ -142,27 +141,6 @@
 				<version>1.0.2</version>
 			</dependency>
 			<dependency>
-				<groupId>com.sun.xml.bind</groupId>
-				<artifactId>jaxb-impl</artifactId>
-				<version>${jaxbVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.xml.bind</groupId>
-				<artifactId>jaxb-xjc</artifactId>
-				<version>${jaxbVersion}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>hsqldb</groupId>
-				<artifactId>hsqldb</artifactId>
-				<version>1.8.0.7</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.lucene</groupId>
-				<artifactId>lucene-core</artifactId>
-				<version>2.9.1</version>
-			</dependency>
-			<dependency>
 				<groupId>kxml2</groupId>
 				<artifactId>kxml2</artifactId>
 				<version>2.1.8</version>
@@ -184,32 +162,6 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-      <plugin>
-        <groupId>com.google.code.maven-license-plugin</groupId>
-        <artifactId>maven-license-plugin</artifactId>
-        <version>1.4.0</version>
-            <configuration>
-                <basedir>${basedir}</basedir>
-                <header>${basedir}/license_header.txt</header>
-                <quiet>false</quiet>
-                <failIfMissing>true</failIfMissing>
-                <aggregate>false</aggregate>
-                <includes>
-                    <include>src/**</include>
-                </includes>
-                <excludes>
-                    <exclude>target/**</exclude>
-                    <exclude>**/*.xsd</exclude>
-                </excludes>
-            </configuration>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>check</goal>
-                    </goals>
-                </execution>
-            </executions>
-      </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -287,5 +239,38 @@
 				</plugins>
 			</build>
 		</profile>
+	<profile>
+			<id>license</id>
+			<build>
+				<plugins>
+    <plugin>
+        <groupId>com.google.code.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <version>1.4.0</version>
+            <configuration>
+                <basedir>${basedir}</basedir>
+                <header>${basedir}/license_header.txt</header>
+                <quiet>false</quiet>
+                <failIfMissing>true</failIfMissing>
+                <aggregate>false</aggregate>
+                <includes>
+                    <include>src/**</include>
+                </includes>
+                <excludes>
+                    <exclude>target/**</exclude>
+                    <exclude>**/*.xsd</exclude>
+                </excludes>
+            </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                </execution>
+            </executions>
+      </plugin>
+				</plugins>
+			</build>
+		</profile>        
 	</profiles>
 </project>
